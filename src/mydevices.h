@@ -25,6 +25,20 @@ public:
   virtual void run();
 };
 
+// capteur analogique de luminosite (Etape 3)
+class AnalogSensorLuminosity: public Device {
+private:
+  // fait osciller la valeur du cpateur de 1
+  int alea;
+  // valeur de luminosite mesuree
+  int val;
+  // temps entre 2 prises de valeurs
+  int temps;
+public:
+  AnalogSensorLuminosity(int d);
+  virtual void run();
+};
+
 // exemple d'actionneur digital : une led, ne pas oublier d'heriter de Device
 class DigitalActuatorLED: public Device {
 private:

@@ -3,8 +3,10 @@
 
 using namespace std;
 
+int luminosite_environnement = 200;
+
 //classe AnalogSensorTemperature
-AnalogSensorTemperature::AnalogSensorTemperature(int d,int  t):Device(),val(t),temps(d){
+AnalogSensorTemperature::AnalogSensorTemperature(int d,int t):Device(),val(t),temps(d){
   alea=1;
 }
 
@@ -16,6 +18,23 @@ void AnalogSensorTemperature::run(){
     sleep(temps);
   }
 }
+
+//classe AnalogSensorLuminosity
+AnalogSensorLuminosity::AnalogSensorLuminosity(int d):Device(),temps(d){
+  alea=2;
+  val=luminosite_environnement;
+}
+
+void AnalogSensorLuminosity::run(){
+  while(1){
+    alea=2-alea;
+    if(ptrmem!=NULL)
+      *ptrmem=val+alea;
+    sleep(temps);
+  }
+}
+
+
 
 //classe DigitalActuatorLED
 DigitalActuatorLED::DigitalActuatorLED(int t):Device(),state(LOW),temps(t){
