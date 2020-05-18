@@ -54,6 +54,21 @@ public:
   virtual void run();
 };
 
+// exemple d'actionneur digital : une led, ne pas oublier d'heriter de Device
+class IntelligentDigitalActuatorLED: public Device {
+private:
+  // etat de la LED
+  int state;
+  // temps entre 2 affichage de l etat de la led
+  int temps;
+  
+public:
+    // initialisation du temps de rafraichiisement
+  IntelligentDigitalActuatorLED(int t);
+  // thread representant l'actionneur et permettant de fonctionner independamment de la board
+  virtual void run();
+};
+
 // exemple d'actionneur sur le bus I2C permettant d'echanger des tableaux de caracteres : un ecran, ne pas oublier d'heriter de Device
 class I2CActuatorScreen : public Device{
 protected:

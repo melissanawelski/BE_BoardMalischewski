@@ -29,12 +29,30 @@ void AnalogSensorLuminosity::run(){
   while(1){
     alea=2-alea;
     if(ptrmem!=NULL)
-      *ptrmem=val+alea;
+      *ptrmem=luminosite_environnement+alea;
     sleep(temps);
   }
 }
 
 
+IntelligentDigitalActuatorLED::IntelligentDigitalActuatorLED(int t):Device(),state(LOW),temps(t){
+}
+
+void IntelligentDigitalActuatorLED::run(){
+  while(1){
+    if(ptrmem!=NULL)
+      state=*ptrmem;
+    if (state==LOW){
+      luminosite_environnement-=50;
+      cout << "((((eteintIntelligent))))\n";
+    }
+    else{
+      luminosite_environnement+=50;
+      cout << "((((allumeIntelligent))))\n";
+    }
+    sleep(temps);
+    }
+}
 
 //classe DigitalActuatorLED
 DigitalActuatorLED::DigitalActuatorLED(int t):Device(),state(LOW),temps(t){
