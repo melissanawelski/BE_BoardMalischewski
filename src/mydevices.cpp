@@ -4,6 +4,7 @@
 using namespace std;
 
 int luminosite_environnement = 200;
+int luminosite_led = 0;
 
 //classe AnalogSensorTemperature
 AnalogSensorTemperature::AnalogSensorTemperature(int d,int t):Device(),val(t),temps(d){
@@ -22,36 +23,24 @@ void AnalogSensorTemperature::run(){
 //classe AnalogSensorLuminosity
 AnalogSensorLuminosity::AnalogSensorLuminosity(int d):Device(),temps(d){
   alea=2;
-  val=luminosite_environnement;
+  val=luminosite_environnement + luminosite_led;
 }
 
 void AnalogSensorLuminosity::run(){
   while(1){
     alea=2-alea;
-    if(ptrmem!=NULL)
-      *ptrmem=luminosite_environnement+alea;
-    sleep(temps);
-  }
-}
-
-
-IntelligentDigitalActuatorLED::IntelligentDigitalActuatorLED(int t):Device(),state(LOW),temps(t){
-}
-
-void IntelligentDigitalActuatorLED::run(){
-  while(1){
-    if(ptrmem!=NULL)
-      state=*ptrmem;
-    if (state==LOW){
-      luminosite_environnement-=50;
-      cout << "((((eteintIntelligent))))\n";
+    if(ptrmem!=NULL){
+      //cout<<"[LOG]luminosit_env: " << luminosite_environnement << endl;
+      //cout<<"[LOG]luminosit_led: " << luminosite_led << endl;
+      //cout<<"[LOG]alea: " << alea << endl;
+      //sleep(1);
+      *ptrmem = luminosite_environnement + luminosite_led + alea;
     }
     else{
-      luminosite_environnement+=50;
-      cout << "((((allumeIntelligent))))\n";
+      cout<<"ptrmem == null"<<endl;
     }
     sleep(temps);
-    }
+  }
 }
 
 //classe DigitalActuatorLED
@@ -65,7 +54,27 @@ void DigitalActuatorLED::run(){
     if (state==LOW)
       cout << "((((eteint))))\n";
     else
-    cout << "((((allume))))\n";
+      cout << "((((allume))))\n";
+    sleep(temps);
+    }
+}
+
+//classe IntelligentDigitalActuatorLED
+IntelligentDigitalActuatorLED::IntelligentDigitalActuatorLED(int t):Device(),state(LOW),temps(t){
+}
+
+void IntelligentDigitalActuatorLED::run(){
+  while(1){
+    
+    if(ptrmem!=NULL)
+      state=*ptrmem;
+    if (state==LOW){
+      cout << "((((eteintIntelligent))))\n";
+    }
+    else{
+      luminosite_led=50;
+      cout << "((((allumeIntelligent))))\n";
+    }
     sleep(temps);
     }
 }
@@ -83,8 +92,3 @@ void I2CActuatorScreen::run(){
     sleep(1);
     }
 }
-
-
-
-
-
