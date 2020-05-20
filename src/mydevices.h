@@ -5,6 +5,7 @@
 #include <thread>
 #include <unistd.h>
 #include <string.h>
+#include <fstream>
 #include "core_simulation.h"
 
 
@@ -48,7 +49,7 @@ private:
   int temps;
   
 public:
-    // initialisation du temps de rafraichiisement
+    // initialisation du temps de rafraichissement
   DigitalActuatorLED(int t);
   // thread representant l'actionneur et permettant de fonctionner independamment de la board
   virtual void run();
@@ -63,7 +64,7 @@ private:
   int temps;
   
 public:
-    // initialisation du temps de rafraichiisement
+    // initialisation du temps de rafraichissement
   IntelligentDigitalActuatorLED(int t);
   // thread representant l'actionneur et permettant de fonctionner independamment de la board
   virtual void run();
@@ -81,5 +82,23 @@ public:
   // thread representant le capteur et permettant de fonctionner independamment de la board
   virtual void run();
 };
+
+//classe interraction extérieure avec le simulateur
+class ExternalDigitalSensorButton : public Device{
+protected:
+  // etat bouton
+  int stateb;
+  // temps entre 2 affichage de l etat du bouton
+  int temps;
+
+public :
+  // constructeur
+  ExternalDigitalSensorButton(int t);
+  // thread representant le capteur et permettant de fonctionner independamment de la board
+  virtual void run();
+
+};
+
+
 
 #endif

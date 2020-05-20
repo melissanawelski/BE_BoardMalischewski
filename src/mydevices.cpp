@@ -90,5 +90,25 @@ void I2CActuatorScreen::run(){
       cout << "---screen :"<< buf << endl;
     }
     sleep(1);
+  }
+}
+
+//classe ExternalDigitalSensorButton
+ExternalDigitalSensorButton::ExternalDigitalSensorButton(int t) : Device(),stateb(LOW),temps(t){}
+
+void ExternalDigitalSensorButton::run(){
+  while(1){
+    int alea = 1;
+    if(ifstream("fileName")){// le fichier existe
+      stateb=1; // le bouton est on
     }
+    if (stateb==LOW){
+      cout << "((((relache))))\n";
+      stateb=stateb+alea;
+    }
+    else {
+      cout << "((((appui))))\n";
+      sleep(temps);
+    }
+  }  
 }
