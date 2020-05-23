@@ -7,7 +7,7 @@
 #include <mutex>
 
 #define DELAY 3
-#define TEMP 22
+#define TEMP 20
 #define HIGH 1
 #define LOW 0
 #define MAX_I2C_DEVICES 4
