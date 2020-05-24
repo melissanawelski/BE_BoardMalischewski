@@ -99,6 +99,20 @@ public :
 
 };
 
+class IrSensor : public Device{
+protected :
+  // etat bouton
+  int stateIR;
+  // temps entre 2 affichage de l etat du bouton
+  int temps;
+
+public :
+  // constructeur;
+  IrSensor(int t);
+  // thread representant le capteur et permettant de fonctionner independamment de la board
+  virtual void run();
+};
+
 
 
 #endif

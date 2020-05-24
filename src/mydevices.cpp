@@ -112,3 +112,22 @@ void ExternalDigitalSensorButton::run(){
     }
   }  
 }
+
+//classe IrSensor
+IrSensor::IrSensor(int t) : Device(), stateIR(LOW), temps(t){};
+
+void IrSensor::run(){
+  while(1){
+    if(ptrmem!=NULL){
+      stateIR=*ptrmem;
+    }
+    if (stateIR==LOW){
+      cout << "((((nobody))))\n";
+    }
+    else{
+      luminosite_led=50;
+      cout << "((((peoplehere))))\n";
+    }
+    sleep(temps); 
+  }
+}
