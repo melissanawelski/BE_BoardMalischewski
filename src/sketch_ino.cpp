@@ -1,68 +1,133 @@
 #include <unistd.h>
 #include "core_simulation.h"
 
+#define RIDEAUCLOSE 10
+#define RIDEAUOPEN 20
+#define TEMPIDEAL 23
+
+
 // la fonction d'initialisation d'arduino
 void Board::setup(){
   // on configure la vitesse de la liaison
   Serial.begin(9600);
   // on fixe les pin en entree et en sorite en fonction des capteurs/actionneurs mis sur la carte
-  // pinMode(2,INPUT); // pin sensor lunimosity
-  // pinMode(3,INPUT);
-  pinMode(0,OUTPUT);
-  pinMode(4,INPUT);
-  //pinMode(3,OUTPUT); // pin intelligent led
-  // pinMode(5,OUTPUT);
-  // pinMode(6,OUTPUT);
-  // analogWrite(5,0);
-  // analogWrite(6,0);
-  // pinMode(7,OUTPUT);
-  // analogWrite(7,0);
-  digitalWrite(0,LOW);
+  pinMode(0,INPUT); // pin sensor_temperature
+  pinMode(1,INPUT); // pin senor_luminosity
+  pinMode(2,INPUT); // pin sensor_position
+  pinMode(3,INPUT); // pin interaction_button
+  pinMode(4,OUTPUT); // pin actuator_led qui indique l etat du button
+  pinMode(5,OUTPUT); // pin actuator_moteur
+  pinMode(6,OUTPUT); // pin actuator_lampe
+  pinMode(7,OUTPUT); // pin actuator_chauffclim
+  // on initialise etat du sorties
+  digitalWrite(4,LOW); // initialise etat du sortie a LOW
+  analogWrite(5,0); // initialise etat du sortie a 0 (device closed)
+  analogWrite(6,0); // initialise etat du sortie a 0 (device closed)
+  analogWrite(7,0); // initialise etat du sortie a 0 (device closed)
 }
 
 // la boucle de controle arduino
 void Board::loop(){
+// recuperer et afficher la valeur du temperature et lumonosite
+  char bufTem[100];
+  char bufLum[100];
+  char bufPos[100];
+  int valTem;
+  int valLum;
+  int valPos;
+  int etatButton = 0; 
+  static int cpt=0;
+
+  for(int i=0;i<10;i++){
+    // lecture sur les pins
+    valTem=analogRead(0);
+    valLum=analogRead(1);
+    valPos=analogRead(2);
+    etatButton=digitalRead(3);   
+    // allume ou etteint led pour indiquer l etat du button : button on -> allume, button off ->etteint  
+    if(etatButton==1)
+      digitalWrite(4,HIGH);
+    else digitalWrite(4,LOW);
+    // surveille les donnes
+    sprintf(bufTem,"temperature %d",valTem);
+    Serial.println(bufTem);
+    sprintf(bufLum,"luminosity %d",valLum);
+    Serial.println(bufLum);
+    sprintf(bufPos,"position du rideau %d",valPos);
+    Serial.println(bufPos);
+    // tous les 5 fois on affiche sur l ecran la temperature et la lunimosite
+    if(cpt%5==0){
+      sprintf(bufTem,"%d",valTem);
+      sprintf(bufLum,"%d",valLum);
+      bus.write(1,bufTem,100); // ecran 1 affiche temperature
+      bus.write(2,bufLum,100); // ecran 2 affiche lunimosite
+    }
+    cpt++;
+
+    // ***TEST CAS JOURNEE : LUMINOSITY 400 + TEMPERATURE 23***
+    // juge luminosite pour assure lum>=400
+    // cas humain autorise de toucher le rideau
+    // if(valLum<400 && etatButton==LOW){
+    //   analogWrite(5,RIDEAUOPEN);
+    //   if(valLum<250 && valPos==RIDEAUOPEN){
+    //       analogWrite(6,4);
+    //   }
+    //   else if(valLum>=250 && valLum < 300 && valPos==RIDEAUOPEN){
+    //       analogWrite(6,3);
+    //   }
+    //   else if(valLum>=300 && valLum < 350 && valPos==RIDEAUOPEN){
+    //       analogWrite(6,2);
+    //   }
+    //   else if(valLum>=350 && valPos==RIDEAUOPEN){
+    //       analogWrite(6,1);
+    //   }
+    // }
+    // // cas humain n'autorise pas de toucher le rideau
+    // else if(valLum<400 && etatButton==HIGH){
+    //   //cout<<"[[[[[log valPos]]]]]"<<valPos<<endl;
+    //   analogWrite(5,0);
+    //   if(valLum<250){
+    //       analogWrite(6,4);
+    //   }
+    //   else if(valLum>=250 && valLum < 300){
+    //       analogWrite(6,3);
+    //   }
+    //   else if(valLum>=300 && valLum < 350){
+    //       analogWrite(6,2);
+    //   }
+    //   else if(valLum>=350){
+    //       analogWrite(6,1);
+    //   }   
+    // }
+    // else{
+    //   if(valTem<19||valTem>25){
+    //     analogWrite(7,23);
+    //   } 
+    // }
+
+
+    // ***TEST CAS NUIT***
+    analogWrite(5,RIDEAUCLOSE);
+    if(valTem<19||valTem>25){
+      analogWrite(7,23);
+    }
+
+
+
+    sleep(1);
+  }
+
+
+
+
+
+
+
   // ***TEST BUTTON***//
-  int etat=0;
-  etat = digitalRead(4);
-  if(etat==1) digitalWrite(0,HIGH);
-  else digitalWrite(0,LOW);
-
-
-  // ***TEST LUMINOSITY 400***
-  // char bufLum[100];
-  // int valLum;
-  // char bufPos[100];
-  // int valPos;
-
-  // for(int i=0;i<5;i++){
-  //   valLum=analogRead(2);
-  //   sprintf(bufLum,"luminosity %d",valLum);
-  //   Serial.println(bufLum);
-  //   valPos=analogRead(3);
-  //   sprintf(bufPos,"position du rideau %d",valPos);
-  //   Serial.println(bufPos);
-  //   sleep(1);
-  // }
-
-  // if(valLum<400){
-  //   analogWrite(5,90);
-  //   if(valLum<250 && valPos==90){
-  //     analogWrite(6,4);
-  //   }
-  //   else if(valLum>=250 && valLum < 300 && valPos==90){
-  //     analogWrite(6,3);
-  //   }
-  //   else if(valLum>=300 && valLum < 350 && valPos==90){
-  //     analogWrite(6,2);
-  //   }
-  //   else if(valLum>=350 && valPos==90){
-  //     analogWrite(6,1);
-  //   }
-  // }
-  // else{
-  //     cout<<"[[[[[[[[[[[[luminosity bon]]]]]]]]]]]";
-  // }
+  // int etat=0;
+  // etat = digitalRead(4);
+  // if(etat==1) digitalWrite(0,HIGH);
+  // else digitalWrite(0,LOW);
 
 
   // ***Codes pour SCREEN si bosion***

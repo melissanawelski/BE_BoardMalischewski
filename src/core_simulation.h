@@ -6,13 +6,13 @@
 #include <thread>
 #include <mutex>
 
-#define DELAY 3
+#define DELAY 1
 #define TEMP 20
 #define HIGH 1
 #define LOW 0
 #define MAX_I2C_DEVICES 4
 #define I2C_BUFFER_SIZE 1024
-#define MAX_IO_PIN 6
+#define MAX_IO_PIN 8
 
 using namespace std;
 

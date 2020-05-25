@@ -24,8 +24,6 @@ class InputException: public exception{
 // exemple de capteur analogique de temperature, ne pas oublier d'heriter de Device
 class AnalogSensorTemperature: public Device {
 private:
-  // fait osciller la valeur du cpateur de 1
-  int alea;
   // valeur de temperature mesuree
   int val;
   // temps entre 2 prises de valeurs
@@ -33,7 +31,7 @@ private:
   
 public:
   // constructeur ne pas oublier d'initialiser la classe mere
-  AnalogSensorTemperature(int d,int  t);
+  AnalogSensorTemperature(int d);
   // thread representant le capteur et permettant de fonctionner independamment de la board
   virtual void run();
 };

@@ -3,8 +3,8 @@
 
 using namespace std;
 
-int temperature_environnement = 22;
-int position_rideau = 80;
+int temperature_environnement = 18;
+int position_rideau = 10;
 int luminosite_environnement = 200;
 int luminosite_externe = 200;
 int luminosite_rideau = luminosite_externe * position_rideau / 100;
@@ -21,13 +21,12 @@ int LampException::getLevel(){
 }
 
 //classe AnalogSensorTemperature
-AnalogSensorTemperature::AnalogSensorTemperature(int d,int t):Device(),val(t),temps(d){
-  alea=1;
+AnalogSensorTemperature::AnalogSensorTemperature(int d):Device(),temps(d){
+  val = temperature_environnement;
 }
 
 void AnalogSensorTemperature::run(){
   while(1){
-    alea=1-alea;
     if(ptrmem!=NULL)
       *ptrmem = temperature_environnement;
     sleep(temps);
@@ -36,7 +35,6 @@ void AnalogSensorTemperature::run(){
 
 //classe AnalogSensorLuminosity
 AnalogSensorLuminosity::AnalogSensorLuminosity(int d):Device(),temps(d){
-
   val=luminosite_environnement + luminosite_led + luminosite_lampe + luminosite_rideau;
 }
 
@@ -76,9 +74,10 @@ void DigitalActuatorLED::run(){
     if(ptrmem!=NULL)
       state=*ptrmem;
     if (state==LOW)
-      cout << "((((eteint))))\n";
-    else
-      cout << "((((allume))))\n";
+      cout << "((((eteintLed))))\n";
+    
+    if(state==HIGH)
+      cout << "((((allumeLed))))\n";
     sleep(temps);
     }
 }
@@ -158,8 +157,8 @@ void IntelligentAnalogActuatorLamp::run(){
       checkLevel(level);
       switch (level){
         case 1:
-        luminosite_lampe = 50;
-        cout << "((((allumeLampe a niveau 1))))\n";
+          luminosite_lampe = 50;
+          cout << "((((allumeLampe a niveau 1))))\n";
         break;
         case 2:
         luminosite_lampe = 100;
