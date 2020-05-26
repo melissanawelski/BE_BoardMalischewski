@@ -10,6 +10,7 @@ int luminosite_externe = 200;
 int luminosite_rideau = luminosite_externe * position_rideau / 100;
 int luminosite_led = 0;
 int luminosite_lampe = 0;
+int nb_humain = 0;
 
 
 // classe exception
@@ -254,3 +255,55 @@ void ExternalDigitalSensorButton::run(){
     sleep(temps);
   }  
 }
+
+//classe IrSensor
+DigitalSensorIR::DigitalSensorIR(int t) : Device(), stateIR(LOW), temps(t){
+
+};
+
+void DigitalSensorIR::run(){
+  while(1){
+    if(ptrmem!=NULL){
+      if(nb_humain>0){
+        stateIR = 1;
+        cout << "((((peoplehere))))\n";
+      }
+      else{
+        stateIR = 0;
+        cout << "((((nobody))))\n";
+      }
+      *ptrmem = stateIR;
+    }
+    sleep(temps); 
+  }
+}
+
+//classe simulant le module RTC de façon grossière, donne l'heure, date jour etc
+DigitalSensorRTC::DigitalSensorRTC(int t) :  Device(), jour(LOW), temps(t){
+
+};
+
+void DigitalSensorRTC::run(){
+  while(1){
+    if(ptrmem!=NULL){
+      //simule l'envoie de data du module RTC et la lecture par l'arduino
+      // date / heure actuelle basée sur le système actuel
+      time_t tmm = time(0);
+      // convertir en forme de chaîne
+      char* dt = ctime(&tmm);
+      // convertir en tm struct pour UTC
+      tm *g = gmtime(&tmm);
+      dt = asctime(g);
+      cout << "La date et l'heure UTC sont:"<< dt ;
+
+      if(g->tm_hour < 8 or g->tm_hour>21){
+        jour = 0;
+      }
+      else{
+        jour = 1;
+      }
+      *ptrmem = jour;
+    }
+    sleep(temps);
+  }
+}  

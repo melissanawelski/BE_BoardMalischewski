@@ -11,6 +11,13 @@ int main(){
   //cout << boxluminosity;
   AnalogActuatorChauffClim chauffclim(DELAY);
   esp8266.pin(7,chauffclim);
+  DigitalSensorIR ir(DELAY);
+  esp8266.pin(8,ir);
+  DigitalSensorRTC rtc(DELAY);
+  esp8266.pin(9,rtc);
+
+
+
 
 
 

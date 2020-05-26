@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <fstream>
+#include <ctime>
 #include "core_simulation.h"
 
 // exception de lampe
@@ -170,6 +171,47 @@ public :
   // thread representant le capteur et permettant de fonctionner independamment de la board
   virtual void run();
 };
+
+//classe de détéction de présence via infrarouge
+class DigitalSensorIR : public Device{
+protected :
+  // etat bouton
+  int stateIR;
+  // temps entre 2 affichage de l etat du bouton
+  int temps;
+
+public :
+  // constructeur;
+  DigitalSensorIR(int t);
+  // thread representant le capteur et permettant de fonctionner independamment de la board
+  virtual void run();
+};
+
+
+
+
+
+//classe simulant le module RTC de façon grossière, donne l'heure, date jour etc
+class DigitalSensorRTC : public Device{
+protected :
+  // etat bouton
+  int jour;
+  // temps entre 2 affichage de l etat du bouton
+  int temps;
+
+public :
+  // constructeur;
+  DigitalSensorRTC(int t);
+  // thread representant le capteur et permettant de fonctionner independamment de la board
+  //virtual void run();
+  //fonction qui renvoie la date et l'heure quand on lui demande
+  virtual void run();
+};
+
+
+
+
+
 
 
 #endif

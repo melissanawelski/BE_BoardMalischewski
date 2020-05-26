@@ -1,8 +1,8 @@
 #include <unistd.h>
 #include "core_simulation.h"
 
-#define RIDEAUCLOSE 10
-#define RIDEAUOPEN 20
+#define RIDEAUCLOSE 10 // pour teste plus rapide
+#define RIDEAUOPEN 20  // pour teste plus rapide
 #define TEMPIDEAL 23
 
 
@@ -10,7 +10,8 @@
 void Board::setup(){
   // on configure la vitesse de la liaison
   Serial.begin(9600);
-  // on fixe les pin en entree et en sorite en fonction des capteurs/actionneurs mis sur la carte
+  pinMode(0,INPUT);
+  // // on fixe les pin en entree et en sorite en fonction des capteurs/actionneurs mis sur la carte
   pinMode(0,INPUT); // pin sensor_temperature
   pinMode(1,INPUT); // pin senor_luminosity
   pinMode(2,INPUT); // pin sensor_position
@@ -19,6 +20,8 @@ void Board::setup(){
   pinMode(5,OUTPUT); // pin actuator_moteur
   pinMode(6,OUTPUT); // pin actuator_lampe
   pinMode(7,OUTPUT); // pin actuator_chauffclim
+  pinMode(8,INPUT);
+  pinMode(9,INPUT);
   // on initialise etat du sorties
   digitalWrite(4,LOW); // initialise etat du sortie a LOW
   analogWrite(5,0); // initialise etat du sortie a 0 (device closed)
@@ -28,13 +31,15 @@ void Board::setup(){
 
 // la boucle de controle arduino
 void Board::loop(){
-// recuperer et afficher la valeur du temperature et lumonosite
+// // recuperer et afficher la valeur du temperature et lumonosite
   char bufTem[100];
   char bufLum[100];
   char bufPos[100];
   int valTem;
   int valLum;
   int valPos;
+  int etatPresence;
+  int etatJour;
   int etatButton = 0; 
   static int cpt=0;
 
@@ -44,6 +49,8 @@ void Board::loop(){
     valLum=analogRead(1);
     valPos=analogRead(2);
     etatButton=digitalRead(3);   
+    etatPresence=digitalRead(8);
+    etatJour=digitalRead(9);
     // allume ou etteint led pour indiquer l etat du button : button on -> allume, button off ->etteint  
     if(etatButton==1)
       digitalWrite(4,HIGH);
@@ -65,51 +72,67 @@ void Board::loop(){
     cpt++;
 
     // ***TEST CAS JOURNEE : LUMINOSITY 400 + TEMPERATURE 23***
-    // juge luminosite pour assure lum>=400
-    // cas humain autorise de toucher le rideau
-    if(valLum<400 && etatButton==LOW){
-      analogWrite(5,RIDEAUOPEN);
-      if(valLum<250 && valPos==RIDEAUOPEN){
-          analogWrite(6,4);
+    if(etatPresence==1){
+      if(etatJour==1){
+        // juge luminosite pour assure lum>=400
+        // cas humain autorise de toucher le rideau
+        if(valLum<400 && etatButton==LOW){
+          analogWrite(5,RIDEAUOPEN);
+          if(valLum<250 && valPos==RIDEAUOPEN){
+            analogWrite(6,4);
+          }
+          else if(valLum>=250 && valLum < 300 && valPos==RIDEAUOPEN){
+            analogWrite(6,3);
+          }
+          else if(valLum>=300 && valLum < 350 && valPos==RIDEAUOPEN){
+            analogWrite(6,2);
+          }
+          else if(valLum>=350 && valPos==RIDEAUOPEN){
+            analogWrite(6,1);
+          }
+        }
+        // cas humain n'autorise pas de toucher le rideau
+        else if(valLum<400 && etatButton==HIGH){
+          analogWrite(5,0);
+          if(valLum<250){
+            analogWrite(6,4);
+          }
+          else if(valLum>=250 && valLum < 300){
+            analogWrite(6,3);
+           }
+          else if(valLum>=300 && valLum < 350){
+            analogWrite(6,2);
+          }
+          else if(valLum>=350){
+            analogWrite(6,1);
+          }   
+        }
+        else{
+          if(valTem<19||valTem>25){
+            analogWrite(7,23);
+          } 
+        }
       }
-      else if(valLum>=250 && valLum < 300 && valPos==RIDEAUOPEN){
-          analogWrite(6,3);
+      else{
+      //***CAS NUIT***
+        analogWrite(5,RIDEAUCLOSE);
+        if((valTem<19||valTem>25) && valPos==RIDEAUCLOSE){
+          analogWrite(7,23);
+        }
       }
-      else if(valLum>=300 && valLum < 350 && valPos==RIDEAUOPEN){
-          analogWrite(6,2);
-      }
-      else if(valLum>=350 && valPos==RIDEAUOPEN){
-          analogWrite(6,1);
-      }
-    }
-    // cas humain n'autorise pas de toucher le rideau
-    else if(valLum<400 && etatButton==HIGH){
-      analogWrite(5,0);
-      if(valLum<250){
-          analogWrite(6,4);
-      }
-      else if(valLum>=250 && valLum < 300){
-          analogWrite(6,3);
-      }
-      else if(valLum>=300 && valLum < 350){
-          analogWrite(6,2);
-      }
-      else if(valLum>=350){
-          analogWrite(6,1);
-      }   
-    }
-    else{
-      if(valTem<19||valTem>25){
-        analogWrite(7,23);
-      } 
     }
 
 
-    // ***TEST CAS NUIT***
-    // analogWrite(5,RIDEAUCLOSE);
-    // if((valTem<19||valTem>25) && valPos==RIDEAUCLOSE){
-    //   analogWrite(7,23);
-    // }
+
+
+
+
+
+
+    
+
+
+
 
 
 
