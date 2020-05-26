@@ -35,8 +35,8 @@ void Board::loop(){
   char bufTem[100];
   char bufLum[100];
   char bufPos[100];
-  int valTem;
-  int valLum;
+  int valTem; // valeurs de temperature
+  int valLum; // valeurs de lunimosite
   int valPos;
   int etatPresence;
   int etatJour;
@@ -136,7 +136,7 @@ void Board::loop(){
 
 
 
-    sleep(1);
+    sleep(1); // sleep une seconde
   }
 
 

@@ -10,7 +10,7 @@ int luminosite_externe = 200;
 int luminosite_rideau = luminosite_externe * position_rideau / 100;
 int luminosite_led = 0;
 int luminosite_lampe = 0;
-int nb_humain = 0;
+int nb_humain = 2;
 
 
 // classe exception
