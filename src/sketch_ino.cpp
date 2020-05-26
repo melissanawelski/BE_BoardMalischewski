@@ -67,50 +67,49 @@ void Board::loop(){
     // ***TEST CAS JOURNEE : LUMINOSITY 400 + TEMPERATURE 23***
     // juge luminosite pour assure lum>=400
     // cas humain autorise de toucher le rideau
-    // if(valLum<400 && etatButton==LOW){
-    //   analogWrite(5,RIDEAUOPEN);
-    //   if(valLum<250 && valPos==RIDEAUOPEN){
-    //       analogWrite(6,4);
-    //   }
-    //   else if(valLum>=250 && valLum < 300 && valPos==RIDEAUOPEN){
-    //       analogWrite(6,3);
-    //   }
-    //   else if(valLum>=300 && valLum < 350 && valPos==RIDEAUOPEN){
-    //       analogWrite(6,2);
-    //   }
-    //   else if(valLum>=350 && valPos==RIDEAUOPEN){
-    //       analogWrite(6,1);
-    //   }
-    // }
-    // // cas humain n'autorise pas de toucher le rideau
-    // else if(valLum<400 && etatButton==HIGH){
-    //   //cout<<"[[[[[log valPos]]]]]"<<valPos<<endl;
-    //   analogWrite(5,0);
-    //   if(valLum<250){
-    //       analogWrite(6,4);
-    //   }
-    //   else if(valLum>=250 && valLum < 300){
-    //       analogWrite(6,3);
-    //   }
-    //   else if(valLum>=300 && valLum < 350){
-    //       analogWrite(6,2);
-    //   }
-    //   else if(valLum>=350){
-    //       analogWrite(6,1);
-    //   }   
-    // }
-    // else{
-    //   if(valTem<19||valTem>25){
-    //     analogWrite(7,23);
-    //   } 
-    // }
+    if(valLum<400 && etatButton==LOW){
+      analogWrite(5,RIDEAUOPEN);
+      if(valLum<250 && valPos==RIDEAUOPEN){
+          analogWrite(6,4);
+      }
+      else if(valLum>=250 && valLum < 300 && valPos==RIDEAUOPEN){
+          analogWrite(6,3);
+      }
+      else if(valLum>=300 && valLum < 350 && valPos==RIDEAUOPEN){
+          analogWrite(6,2);
+      }
+      else if(valLum>=350 && valPos==RIDEAUOPEN){
+          analogWrite(6,1);
+      }
+    }
+    // cas humain n'autorise pas de toucher le rideau
+    else if(valLum<400 && etatButton==HIGH){
+      analogWrite(5,0);
+      if(valLum<250){
+          analogWrite(6,4);
+      }
+      else if(valLum>=250 && valLum < 300){
+          analogWrite(6,3);
+      }
+      else if(valLum>=300 && valLum < 350){
+          analogWrite(6,2);
+      }
+      else if(valLum>=350){
+          analogWrite(6,1);
+      }   
+    }
+    else{
+      if(valTem<19||valTem>25){
+        analogWrite(7,23);
+      } 
+    }
 
 
     // ***TEST CAS NUIT***
-    analogWrite(5,RIDEAUCLOSE);
-    if(valTem<19||valTem>25){
-      analogWrite(7,23);
-    }
+    // analogWrite(5,RIDEAUCLOSE);
+    // if((valTem<19||valTem>25) && valPos==RIDEAUCLOSE){
+    //   analogWrite(7,23);
+    // }
 
 
 

@@ -4,7 +4,7 @@
 using namespace std;
 
 int temperature_environnement = 18;
-int position_rideau = 10;
+int position_rideau = 15;
 int luminosite_environnement = 200;
 int luminosite_externe = 200;
 int luminosite_rideau = luminosite_externe * position_rideau / 100;
