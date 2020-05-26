@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <fstream>
+#include <ctime>
 #include "core_simulation.h"
 
 
@@ -99,6 +100,7 @@ public :
 
 };
 
+//classe de détéction de présence via infrarouge
 class IrSensor : public Device{
 protected :
   // etat bouton
@@ -112,6 +114,24 @@ public :
   // thread representant le capteur et permettant de fonctionner independamment de la board
   virtual void run();
 };
+
+//classe simulant le module RTC de façon grossière, donne l'heure, date jour etc
+class  RTC : public Device{
+protected :
+  // etat bouton
+  int state;
+  // temps entre 2 affichage de l etat du bouton
+  int temps;
+
+public :
+  // constructeur;
+  RTC(int t);
+  // thread representant le capteur et permettant de fonctionner independamment de la board
+  //virtual void run();
+  //fonction qui renvoie la date et l'heure quand on lui demande
+  int read_current_datetime();
+};
+
 
 
 

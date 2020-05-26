@@ -8,17 +8,18 @@ int luminosite_led = 0;
 
 //classe AnalogSensorTemperature
 AnalogSensorTemperature::AnalogSensorTemperature(int d,int t):Device(),val(t),temps(d){
-  alea=1;
+  alea=10;
 }
 
 void AnalogSensorTemperature::run(){
   while(1){
-    alea=1-alea;
+    alea=10-alea;
     if(ptrmem!=NULL)
       *ptrmem=val+alea;
     sleep(temps);
   }
 }
+
 
 //classe AnalogSensorLuminosity
 AnalogSensorLuminosity::AnalogSensorLuminosity(int d):Device(),temps(d){
@@ -131,3 +132,37 @@ void IrSensor::run(){
     sleep(temps); 
   }
 }
+
+//classe simulant le module RTC de façon grossière, donne l'heure, date jour etc
+RTC::RTC(int t) :  Device(), state(LOW), temps(t){};
+
+int RTC::read_current_datetime(){
+  int jour = -1;
+  if(ptrmem!=NULL){
+    state=*ptrmem;
+  }
+
+  if (state==LOW){
+    cout << "L'horloge est deconnectee ou n'a plus de pile";
+  }
+  else{
+    //simule l'envoie de data du module RTC et la lecture par l'arduino
+    // date / heure actuelle basée sur le système actuel
+    time_t tmm = time(0);
+    // convertir en forme de chaîne
+    char* dt = ctime(&tmm);
+    // convertir en tm struct pour UTC
+    tm *g = gmtime(&tmm);
+    dt = asctime(g);
+    cout << "La date et l'heure UTC sont:"<< dt << endl;
+
+    if(g->tm_hour < 8 or g->tm_hour>21){
+      jour = 0;
+    }
+    else{
+      jour = 1;
+    }
+  }
+  return jour;
+}
+

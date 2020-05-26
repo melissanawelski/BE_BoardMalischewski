@@ -22,14 +22,8 @@ void Board::loop(){
   int vpresence;
   static int cpt=0;
 
-  sprintf(buf,"Bonjour et bienvenue sur XiaoMel Domo", '\n');
+  sprintf(buf,"Bonjour et bienvenue sur XiaoMel Domo");
   Serial.println(buf);
-  sprintf(buf,"Veuillez initialiser l'heure", '\n');
-  Serial.println(buf);
-  
-
-
-
 
   vpresence=analogRead(2);
   sprintf(buf,"presence %d",vpresence);
@@ -52,7 +46,7 @@ void Board::loop(){
     for(int i=0;i<5;i++){
       // lecture sur la pin 0 : capteur de temperature
       valLum=analogRead(0);
-      sprintf(buf,"luminosity %d",valLum);
+      sprintf(buf,"temperature %d",valLum);
       Serial.println(buf);
 
       if(cpt%5==0){
