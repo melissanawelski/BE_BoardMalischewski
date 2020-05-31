@@ -5,21 +5,11 @@
 #include <thread>
 #include <unistd.h>
 #include <string.h>
-#include <vector>
 
+using namespace std;
 
 // classe qui manipule mes pieces
 class Piece {
-private:
-  // temperature
-    int temperature;
-  //luminosité
-    int luminosite;
-  //nom de la pièce
-    char nom_p;
-    //piece suivante;
-    Piece *psuivant;
-
 public:
     //constructeur
     Piece(char np);
@@ -27,20 +17,29 @@ public:
     Piece(const Piece& autre);
 
     // destructeur
-    virtual ~Piece();
+    //~Piece();
 
     //renvoie le nom de la pièce
     char getnamepiece(){
-        return nom_p;
+      return nom_p;
     }
 
-    Piece* getsuivantpiece(){
-        return psuivant;
+    void affichepiece(){
+      cout << "la temperature est : "<< temperature << '\n';
+      cout << "la luminosite est : " << luminosite << '\n';
+      cout << "le nom de la piece est :" << nom_p << '\n';
     }
 
-    void putnamepiece(char n){
-        nom_p=n;
-    }
+  
+  
+  private:
+  // temperature
+    int temperature;
+  //luminosité
+    int luminosite;
+  //nom de la pièce
+    char nom_p;
+    
  
 };
 

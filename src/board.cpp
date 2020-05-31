@@ -1,33 +1,33 @@
-#include "core_simulation.h"
-#include "mydevices.h"
+// #include "core_simulation.h"
+// #include "mydevices.h"
+#include "maison.h"
+#include "box.h"
 
 
 int main(){
   // creation d'une board
   Board esp8266;
-  // achat des senseurs et actionneurs
-  //AnalogSensorTemperature temperature(DELAY,TEMP);
-  //DigitalActuatorLED led1(DELAY);
-  IntelligentDigitalActuatorLED ledIntel(DELAY);
-  //I2CActuatorScreen screen1;
-  I2CActuatorScreen screen2;
 
-  // senseurs ajouts
-  AnalogSensorLuminosity luminosity(TEMP);
+  //Pour une première ouverture, échange avec l'utilisateur
+  cout << "Bonjour et bienvenue sur XiaoMel Domo" << '\n';
+  Maison Mamaison = Maison();
+  cout << "Quel est le nombre de piece?"<<'\n';
+	cin >> Mamaison.nbpiece;
+  Mamaison.initialisationmaison(Mamaison.nbpiece);
+  Mamaison.getnbpiece(); //renvoie le nombre de pièce
+  Mamaison.affiche(); //fonction affichage de la liste des pieces
 
-  
-  // branchement des capteurs actionneurs
-  //esp8266.pin(1,temperature);
-  //esp8266.pin(0,led1);
-  esp8266.pin(2,luminosity);
-  esp8266.pin(3,ledIntel);
-  //esp8266.i2c(1,screen1);
-  esp8266.i2c(2,screen2);
- 
-  
+
+  //sleep(50);
+  // configue les captures et actionneurs
+  Box boxLuminosity(&esp8266,DELAY,1,2,3,4,5,6,2); //configuration de module de lunimosity
+  cout << boxLuminosity;
+  Box boxTemperature(&esp8266,DELAY,0,7,1);
+  cout << boxTemperature;
+  Box boxPreJour(&esp8266,DELAY,8,9);
+  cout << boxPreJour;
+
   // allumage de la carte
   esp8266.run();
   return 0;
 }
-
-

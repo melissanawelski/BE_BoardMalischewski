@@ -2,89 +2,81 @@
 
 using namespace std;
 
-//exceptions
-enum piece_err{overunderflow};
 
 //classe Maison
-Maison::Maison(): nbpiece(0), first(NULL){
+Maison::Maison(){
     cout << "Quel est le nom de votre maison?"<<'\n';
     cin >> nom;
 };
 
+Maison::~Maison(){
+	NULL;
+}
+
+
+//Initialisation de la maison
+ void Maison::initialisationmaison(int nbp){
+	int i; //compteur
+	char nompiece;
+	
+	for (i=0; i< nbp; i++){
+		cout << "Quel est le nom de la piece"<< i << "?" <<'\n';
+		cin >> nompiece;
+		Piece piece_aux = Piece(nompiece);
+		piece_aux.affichepiece();
+		agrandissement(piece_aux);
+	} 
+} 
 
 //fonction d'affichage de la liste de pièce
-void Maison::affiche() const {
+void Maison::affiche() {
 	int i;//compteur
 	cout << "("; //affichage
 	for (i = 0; i < nbpiece; i++) {
-		cout << first[i].getnamepiece() << ' ';
+		cout << liste[i].getnamepiece() << ',';
 	}
 	cout << ")\n";
 }
 
-//fonction de saisie des pièces de la maison
-void Maison::put() {
-	int i; //compteur
-    char n;
-	for (i = 0; i < nbpiece; i++) {
-		cout << "taper le nom de la" << i + 1 << "ieme pièce :";
-		cin >> n;
-        first[i].putnamepiece(n);
-	}
-}
 
 //fonction de renvoie du nombre de pièce
-int Maison::getnbpiece() const {
+int Maison::getnbpiece(){
 	return nbpiece;
 }
 
-void Maison::agrandissement(Maison m, Piece newp){
-    if (nbpiece == 0) {
-		*first=newp;
-	}
-    else{
-    int i;//compteur
-    Piece *pposition = m.first;
-    for (i=0; i<nbpiece-1; i++){
-        pposition=pposition->getsuivantpiece();
-    }
-    *pposition->getsuivantpiece()=newp;
-    }
+void Maison::agrandissement(Piece newp){
+		liste.push_back(newp);
 }
 
 //opérateur d'affectation
-Maison& Maison::operator = (const Maison& mbis) {
+ Maison& Maison::operator = (Maison& mbis) {
 	if (nbpiece != mbis.nbpiece) {
-		throw overunderflow;
+		cout << "elles n ont pas le meme nombre de piece";
+	}else{
+		int i;
+		for (i=0; i<nbpiece; i++){
+			liste[i]=mbis.liste[i];
+		}
 	}
-	memcpy(first, mbis.first, nbpiece * sizeof(float));
     nbpiece=mbis.nbpiece;
 	return (*this);
-}
+} 
 
-//opérateur arithmétique, concatène deux maisons
-Maison& Maison::operator +=(const Maison& mbis) {
+  //opérateur arithmétique, concatène deux maisons
+Maison& Maison::operator += (const Maison& mbis) {
 	int i;
     int nbpieceajoutee=nbpiece-mbis.nbpiece;
-	for (i = 0; i < nbpieceajoutee; i++)
-	{
-		agrandissement(mbis,first[i]);
+	for (i = 0; i < nbpieceajoutee; i++){
+		liste.push_back(mbis.liste[i]);
 	}
 	return(*this);
-}
+} 
 
 //opérateur d'indiçage
-Piece& Maison::operator [] (const int i) {
+Piece& Maison::operator [] ( int i) {
 	if (i > (nbpiece - 1) || i < 0) {
-		throw overunderflow;
+		cout << "le numero d'indice n est pas le bon";
 	}
-	return(first[i]);
-}
+	return(liste[i]);
+} 
 
-
-//addition
-Maison operator + (const Maison & m1, const Maison & m2) {
-	Maison temp_m(m1);
-	temp_m += m2;
-	return(temp_m);
-}

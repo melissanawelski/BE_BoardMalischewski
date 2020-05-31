@@ -7,16 +7,18 @@
 #include <string.h>
 #include <vector>
 #include "piece.h"
+using namespace std;
 
 
 
 // classe qui manipule mes maisons
 class Maison {
-private:
+public:
   // nombre de pièce dans la maison
   int nbpiece;
-  char nom[15];
-  Piece *first;  
+  char nom;
+  vector<Piece> liste;
+   
   
 public:
     //constructeur
@@ -25,23 +27,22 @@ public:
     Maison(const Maison& autre);
 
     // destructeur
-    virtual ~Maison();
+    ~Maison();
 
     //operateurs
-	  Maison& operator = (const Maison& mbis);
-	  Maison& operator +=(const Maison& mbis);
-    Piece& operator [](const int i);
+	  Maison& operator = (Maison& mbis);
+	  Maison& operator += (const Maison& mbis);
+    Piece& operator [](int i);
 
     //méthodes (fonctions de la classe)
-    void affiche() const; //fonction affichage de la liste des pieces
-    void put(); //fonction de saisie des pièces de la maison
-    int getnbpiece() const; //renvoie le nombre de pièce 
-    void agrandissement(Maison m, Piece newp); //ajoute une pièce à la maison
+    void initialisationmaison(int nbp); //initialise la maison de l'utilisateur
+    void affiche(); //fonction affichage de la liste des pieces
+    int getnbpiece(); //renvoie le nombre de pièce 
+    void agrandissement(Piece newp); //ajoute une pièce à la maison
+    
 
 };
 
-//opérateur d'incrémentation
-Maison operator + (const Maison& m1, const Maison& m2);
 
 
 
