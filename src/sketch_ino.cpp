@@ -1,11 +1,11 @@
 #include <unistd.h>
 #include "core_simulation.h"
 
-#define RIDEAUCLOSE 70 // pour teste plus rapide
-#define RIDEAUOPEN 90  // pour teste plus rapide
+#define RIDEAUCLOSE 10 // pour teste plus rapide
+#define RIDEAUOPEN 20  // pour teste plus rapide
 #define TEMPIDEAL 23
 
-int level; 
+
 
 
 // la fonction d'initialisation d'arduino
@@ -15,15 +15,15 @@ void Board::setup(){
   pinMode(0,INPUT);
   // // on fixe les pin en entree et en sorite en fonction des capteurs/actionneurs mis sur la carte
   pinMode(0,INPUT); // pin sensor_temperature
-  pinMode(1,INPUT); // pin senor_luminosity
+  pinMode(1,INPUT); // pin sensor_luminosity
   pinMode(2,INPUT); // pin sensor_position
   pinMode(3,INPUT); // pin interaction_button
   pinMode(4,OUTPUT); // pin actuator_led qui indique l etat du button
   pinMode(5,OUTPUT); // pin actuator_moteur
   pinMode(6,OUTPUT); // pin actuator_lampe
   pinMode(7,OUTPUT); // pin actuator_chauffclim
-  pinMode(8,INPUT);
-  pinMode(9,INPUT);
+  pinMode(8,INPUT); //pin sensor_presence
+  pinMode(9,INPUT); //pin sensor_heuredormir
   // on initialise etat du sorties
   digitalWrite(4,LOW); // initialise etat du sortie a LOW
   analogWrite(5,0); // initialise etat du sortie a 0 (device closed)
@@ -39,17 +39,17 @@ void Board::loop(){
   char bufPos[100];
   int valTem; // valeurs de temperature
   int valLum; // valeurs de lunimosite
-  int valPos;
+  int valPos; //valeurs de position
   int etatPresence;
   int etatJour;
   int etatButton = 0;
-  
+  int level=0; 
   static int cpt=0;
-  int testjour=1;
+
 
   for(int i=0;i<10;i++){
     // lecture sur les pins
-    valTem=analogRead(0);
+    valTem=analogRead(0); // lire les valeurs des capteurs
     valLum=analogRead(1);
     valPos=analogRead(2);
     etatButton=digitalRead(3);   
@@ -75,9 +75,9 @@ void Board::loop(){
     }
     cpt++;
 
-    // ***TEST CAS JOURNEE : LUMINOSITY 400 + TEMPERATURE 23***
+    // ***TEST CAS JOURNEE : LUMINOSITY SUPERIEUR A 400 + TEMPERATURE RESTE A 23***
     if(etatPresence==1){
-      if(testjour==1){
+      if(etatJour==1){
         // juge luminosite pour assure lum>=400
         // cas humain autorise de toucher le rideau
         if(valLum<400 && etatButton==LOW){
@@ -101,10 +101,8 @@ void Board::loop(){
         }
         // cas humain impose rideau a fermer
         else if(valLum<400 && etatButton==HIGH){
-          cout<<"Log <400 + HIGH"<<endl;
           analogWrite(5,RIDEAUCLOSE);
           if(level==0 && valPos==RIDEAUCLOSE){
-            cout<<"LEVEL=0"<<endl;
             if(valLum<250){
               analogWrite(6,4);
             }
@@ -119,24 +117,30 @@ void Board::loop(){
             }
           }
           else if(level!=0 && valPos==RIDEAUCLOSE){
-            cout<<"LOGLOGLOG"<<endl;
             if(valLum<250){
               analogWrite(6,4);
-              cout<<"!!!Lunimosite MAXIMUM!!!"<<endl;
             }
             else if(valLum>=250 && valLum<300){
-              analogWrite(6,level+3);
+              if(level+3<4)
+                analogWrite(6,level+3);
+              else
+                analogWrite(6,4);
             }
             else if(valLum>=300 && valLum<350){
-              analogWrite(6,level+2);
+              if(level+2<4)
+                analogWrite(6,level+2);
+              else
+                analogWrite(6,4);
             }
             else if(valLum>=350){
-              analogWrite(6,level+1);
+              if(level+1<5)
+                analogWrite(6,level+1);
+              else
+                analogWrite(6,4);
             }
           }   
         }
         else if(valLum>=400 && etatButton==HIGH){
-          cout<<"LOG: level ="<<level<<endl;
           analogWrite(5,RIDEAUCLOSE);
           if(valTem<19||valTem>25){
             analogWrite(7,TEMPIDEAL);
@@ -144,7 +148,6 @@ void Board::loop(){
 
         }
         else{
-          cout<<"LOG:LUM BON"<<endl;
           if(valTem<19||valTem>25){
             analogWrite(7,TEMPIDEAL);
           } 

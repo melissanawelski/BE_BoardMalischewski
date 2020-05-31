@@ -46,6 +46,7 @@ public:
 // class AnalogActuator
 class AnalogActuator: public Device{
 protected:
+  // valeur write a pin
   int input;
   int temps;
 public:
@@ -56,6 +57,7 @@ public:
 // class DigitalActuator
 class DigitalActuator: public Device{
 protected:
+  // valeur write a pin
   int state;
   int temps;
 public:
@@ -63,19 +65,20 @@ public:
   virtual void run();
 };
 
-// exemple de capteur analogique de temperature, ne pas oublier d'heriter de Device
+// capteur analogique de temperature
 class AnalogSensorTemperature: public AnalogSensor {  
 public:
-  // constructeur ne pas oublier d'initialiser la classe mere
+  // constructeur
   AnalogSensorTemperature(int d);
   // thread representant le capteur et permettant de fonctionner independamment de la board
   virtual void run();
 };
 
-// capteur analogique de luminosite (Etape 3)
+// capteur analogique de luminosite (Etape 3 du sujet)
 class AnalogSensorLuminosity: public AnalogSensor {
 public:
   AnalogSensorLuminosity(int d);
+  // thread representant l'actionneur et permettant de fonctionner independamment de la board
   virtual void run();
 };
 
@@ -88,7 +91,7 @@ public:
 };
 
 
-// exemple d'actionneur digital : une led, ne pas oublier d'heriter de Device
+// actionneur digital : une led
 class DigitalActuatorLED: public DigitalActuator {
 public:
   // initialisation du temps de rafraichiisement
@@ -97,7 +100,7 @@ public:
   virtual void run();
 };
 
-// actionneur digital : une intellignet led, ne pas oublier d'heriter de Device (Etape 4)
+// actionneur digital : une intellignet led (Etape 4 du sujet)
 class IntelligentDigitalActuatorLED: public DigitalActuator {  
 public:
   // initialisation du temps de rafraichiisement
@@ -133,7 +136,7 @@ class AnalogActuatorChauffClim: public AnalogActuator{
 public:
   // initialisation du temps de rafraichiisement;
   AnalogActuatorChauffClim(int t);
-  // verifie la valeur de position est parmi 0-100
+  // verifie la valeur de position est parmi 10-25
   virtual void checkFigure(int in);
   // thread representant l'actionneur et permettant de fonctionner independamment de la board
   virtual void run();
@@ -153,13 +156,10 @@ public:
 };
 
 // classe interraction extérieure avec le simulateur
-class ExternalDigitalSensorButton : public Device{
+class ExternalDigitalSensorButton : public DigitalSensor{
 protected:
   // etat bouton
   int stateb;
-  // temps entre 2 affichage de l etat du bouton
-  int temps;
-
 public :
   // constructeur
   ExternalDigitalSensorButton(int t);

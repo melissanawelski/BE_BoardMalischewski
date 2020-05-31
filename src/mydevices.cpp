@@ -4,7 +4,7 @@
 using namespace std;
 
 int temperature_environnement = 18;
-int position_rideau = 80;
+int position_rideau = 15;
 int luminosite_environnement = 200;
 int luminosite_externe = 200;
 int luminosite_rideau = luminosite_externe * position_rideau / 100;
@@ -69,28 +69,27 @@ void DigitalActuator::run(){
 
 //classe AnalogSensorTemperature
 AnalogSensorTemperature::AnalogSensorTemperature(int d):AnalogSensor(d){
-  val = temperature_environnement;
-  cout<<"temps"<<temps<<endl;
+  val = temperature_environnement; //valeur initiale
 }
 
 void AnalogSensorTemperature::run(){
   while(1){
     if(ptrmem!=NULL)
-      *ptrmem = temperature_environnement;
+      *ptrmem = temperature_environnement; //lire la valeur de temperature et l ecrire a pin
     sleep(temps);
   }
 }
 
 //classe AnalogSensorLuminosity
 AnalogSensorLuminosity::AnalogSensorLuminosity(int d):AnalogSensor(d){
-  val=luminosite_environnement + luminosite_led + luminosite_lampe + luminosite_rideau;
+  val=luminosite_environnement + luminosite_led + luminosite_lampe + luminosite_rideau; //valeur initiale
 }
 
 void AnalogSensorLuminosity::run(){
   while(1){
     if(ptrmem!=NULL){
       luminosite_rideau = luminosite_externe * position_rideau / 100;
-      *ptrmem = luminosite_environnement + luminosite_led + luminosite_lampe + luminosite_rideau;
+      *ptrmem = luminosite_environnement + luminosite_led + luminosite_lampe + luminosite_rideau;// lire tous les luminosite et l ecrire a pin
     }
     sleep(temps);
   }
@@ -98,13 +97,13 @@ void AnalogSensorLuminosity::run(){
 
 // classe AnalogSensorPosition
 AnalogSensorPosition::AnalogSensorPosition(int d):AnalogSensor(d){
-  val=position_rideau;
+  val=position_rideau;//valeur initiale
 }
 
 void AnalogSensorPosition::run(){
   while(1){
     if(ptrmem!=NULL)
-      *ptrmem = position_rideau;
+      *ptrmem = position_rideau; //lire la valeur de position du rideau et l ecrire a pin
     sleep(temps);
   }
 }
@@ -116,9 +115,9 @@ DigitalActuatorLED::DigitalActuatorLED(int t):DigitalActuator(t){
 void DigitalActuatorLED::run(){
   while(1){
     if(ptrmem!=NULL)
-      state=*ptrmem;
+      state=*ptrmem; //lire la valeur ecrit a pin
     if (state==LOW)
-      cout << "((((eteintLed))))\n";
+      cout << "((((eteintLed))))\n"; 
     
     if(state==HIGH)
       cout << "((((allumeLed))))\n";
@@ -133,7 +132,7 @@ IntelligentDigitalActuatorLED::IntelligentDigitalActuatorLED(int t):DigitalActua
 void IntelligentDigitalActuatorLED::run(){
   while(1){
     if(ptrmem!=NULL)
-      state=*ptrmem;
+      state=*ptrmem; //lire la valeur ecrit a pin
     if (state==LOW){
       cout << "((((eteintIntelligent))))\n";
     }
@@ -148,7 +147,7 @@ void IntelligentDigitalActuatorLED::run(){
 // classe AnalogActuatorMoteur
 AnalogActuatorMotor::AnalogActuatorMotor(int t):AnalogActuator(t){
 }
-
+// si les valeur n est pas dans la plage, lancer une exception
 void AnalogActuatorMotor::checkRange(int in){
     if(in<0||in>100)
     throw InputException();
@@ -157,16 +156,14 @@ void AnalogActuatorMotor::checkRange(int in){
 void AnalogActuatorMotor::run(){
   while(1){
     if(ptrmem!=NULL)
-      input=*ptrmem;
+      input=*ptrmem; //lire la valeur ecrit a pin
     try{
-      checkRange(input);
-      //luminosite_rideau = luminosite_externe*position_rideau/100;
+      checkRange(input); //examine la valeur
       if (input==0){
         cout << "((((eteintMoteur))))\n";
       }
       else if(position_rideau == input){
         cout << "((((eteintMoteur))))\n";
-        //luminosite_rideau = luminosite_externe*input/100;
       }
       else if(input > position_rideau){
         cout << "((((allumeMoteur en mode Ascension))))\n";
@@ -187,7 +184,7 @@ void AnalogActuatorMotor::run(){
 // classe IntelligentAnalogActuatorLamp
 IntelligentAnalogActuatorLamp::IntelligentAnalogActuatorLamp(int t):AnalogActuator(t){
 }
-
+// si les valeur n est pas dans la plage, lancer une exception
 void IntelligentAnalogActuatorLamp::checkLevel(int l){
   if(l<0||l>4)
     throw LampException(l);
@@ -196,7 +193,7 @@ void IntelligentAnalogActuatorLamp::checkLevel(int l){
 void IntelligentAnalogActuatorLamp::run(){
   while(1){
     if(ptrmem!=NULL)
-      input=*ptrmem;
+      input=*ptrmem; //lire la valeur ecrit a pin
     try{
       checkLevel(input);
       switch (input){
@@ -231,7 +228,7 @@ void IntelligentAnalogActuatorLamp::run(){
 // classe AnalogActuatorChauffClim
 AnalogActuatorChauffClim::AnalogActuatorChauffClim(int t):AnalogActuator(t){
 }
-
+// si les valeur n est pas dans la plage, lancer une exception
 void AnalogActuatorChauffClim::checkFigure(int in){
     if(in!=0 && (in<20||in>25))
     throw InputException();
@@ -240,7 +237,7 @@ void AnalogActuatorChauffClim::checkFigure(int in){
 void AnalogActuatorChauffClim::run(){
   while(1){
     if(ptrmem!=NULL)
-      input=*ptrmem;
+      input=*ptrmem; //lire la valur ecrit a pin
     try{
       checkFigure(input);
       if (input==0){
@@ -280,7 +277,7 @@ void I2CActuatorScreen::run(){
 }
 
 //classe ExternalDigitalSensorButton
-ExternalDigitalSensorButton::ExternalDigitalSensorButton(int t) : Device(),stateb(LOW),temps(t){
+ExternalDigitalSensorButton::ExternalDigitalSensorButton(int t) : DigitalSensor(t),stateb(LOW){
 
 }
 
@@ -293,7 +290,7 @@ void ExternalDigitalSensorButton::run(){
       else{
         stateb=0;
       }
-      *ptrmem = stateb;
+      *ptrmem = stateb; //ecrire la valeur a pin
     }
     sleep(temps);
   }  
@@ -315,7 +312,7 @@ void DigitalSensorIR::run(){
         stateIR = 0;
         cout << "((((nobody))))\n";
       }
-      *ptrmem = stateIR;
+      *ptrmem = stateIR; // ecrire la valeur a pin
     }
     sleep(temps); 
   }
@@ -323,8 +320,6 @@ void DigitalSensorIR::run(){
 
 //classe simulant le module RTC de façon grossière, donne l'heure, date jour etc
 DigitalSensorRTC::DigitalSensorRTC(int t) : DigitalSensor(t), jour(LOW){
-  cout<< "DigitalSensorRTC - t: "<< t<<endl;
-  cout<<"DigitalSensorRTC - temp: " << temps<<endl;
 };
 
 void DigitalSensorRTC::run(){
