@@ -22,14 +22,49 @@ public:
 class InputException: public exception{
 };
 
-// exemple de capteur analogique de temperature, ne pas oublier d'heriter de Device
-class AnalogSensorTemperature: public Device {
-private:
-  // valeur de temperature mesuree
+// class AnalogSensor
+class AnalogSensor: public Device{
+protected:
+  // valeur mesure au l'initial
   int val;
   // temps entre 2 prises de valeurs
   int temps;
-  
+public:
+  AnalogSensor(int d);
+  virtual void run();
+};
+
+// class DigitalSensor
+class DigitalSensor: public Device{
+protected:
+  int temps;
+public:
+  DigitalSensor(int d);
+  virtual void run();
+};
+
+// class AnalogActuator
+class AnalogActuator: public Device{
+protected:
+  int input;
+  int temps;
+public:
+  AnalogActuator(int t);
+  virtual void run();
+};
+
+// class DigitalActuator
+class DigitalActuator: public Device{
+protected:
+  int state;
+  int temps;
+public:
+  DigitalActuator(int d);
+  virtual void run();
+};
+
+// exemple de capteur analogique de temperature, ne pas oublier d'heriter de Device
+class AnalogSensorTemperature: public AnalogSensor {  
 public:
   // constructeur ne pas oublier d'initialiser la classe mere
   AnalogSensorTemperature(int d);
@@ -38,24 +73,14 @@ public:
 };
 
 // capteur analogique de luminosite (Etape 3)
-class AnalogSensorLuminosity: public Device {
-private:
-  // valeur de luminosite mesuree
-  int val;
-  // temps entre 2 prises de valeurs
-  int temps;
+class AnalogSensorLuminosity: public AnalogSensor {
 public:
   AnalogSensorLuminosity(int d);
   virtual void run();
 };
 
 // capteur analogique de position de rideau 0 (ferme tout) - 100 (ouvert tout)
-class AnalogSensorPosition: public Device {
-private:
-  // valeur de position mesuree
-  int val;
-  // temps entre 2 prises de valeurs
-  int temps;
+class AnalogSensorPosition: public AnalogSensor {
 public:
   AnalogSensorPosition(int d);
   // thread representant l'actionneur et permettant de fonctionner independamment de la board
@@ -64,13 +89,7 @@ public:
 
 
 // exemple d'actionneur digital : une led, ne pas oublier d'heriter de Device
-class DigitalActuatorLED: public Device {
-private:
-  // etat de la LED
-  int state;
-  // temps entre 2 affichage de l etat de la led
-  int temps;
-  
+class DigitalActuatorLED: public DigitalActuator {
 public:
   // initialisation du temps de rafraichiisement
   DigitalActuatorLED(int t);
@@ -79,13 +98,7 @@ public:
 };
 
 // actionneur digital : une intellignet led, ne pas oublier d'heriter de Device (Etape 4)
-class IntelligentDigitalActuatorLED: public Device {
-private:
-  // etat de la LED
-  int state;
-  // temps entre 2 affichage de l etat de la led
-  int temps;
-  
+class IntelligentDigitalActuatorLED: public DigitalActuator {  
 public:
   // initialisation du temps de rafraichiisement
   IntelligentDigitalActuatorLED(int t);
@@ -94,13 +107,7 @@ public:
 };
 
 // actionneur analog : un moteur de type stepper
-class AnalogActuatorMotor: public Device{
-private:
-  // input valeur de moteur
-  int input;
-  // temps entre 2 affichage de l etat du moteur
-  int temps;
-
+class AnalogActuatorMotor: public AnalogActuator{
 public:
   // initialisation du temps de rafraichiisement;
   AnalogActuatorMotor(int t);
@@ -111,13 +118,7 @@ public:
 };
 
 // actionneur analog : une lampe avec 4 niveaux de l'intensite (50lux,100lux,150lux,200lux)
-class IntelligentAnalogActuatorLamp: public Device{
-private:
-  // input niveau de intensite de la lampe
-  int level;
-  // temps entre 2 affichage de l etat du moteur
-  int temps;
-
+class IntelligentAnalogActuatorLamp: public AnalogActuator{
 public:
   // initialisation du temps de rafraichiisement;
   IntelligentAnalogActuatorLamp(int t);
@@ -128,13 +129,7 @@ public:
 };
 
 // actionneur analog : un moteur de type stepper
-class AnalogActuatorChauffClim: public Device{
-private:
-  // input valeur de moteur
-  int input;
-  // temps entre 2 affichage de l etat du moteur
-  int temps;
-
+class AnalogActuatorChauffClim: public AnalogActuator{
 public:
   // initialisation du temps de rafraichiisement;
   AnalogActuatorChauffClim(int t);
@@ -173,13 +168,10 @@ public :
 };
 
 //classe de détéction de présence via infrarouge
-class DigitalSensorIR : public Device{
+class DigitalSensorIR : public DigitalSensor{
 protected :
-  // etat bouton
+  // etat
   int stateIR;
-  // temps entre 2 affichage de l etat du bouton
-  int temps;
-
 public :
   // constructeur;
   DigitalSensorIR(int t);
@@ -187,17 +179,11 @@ public :
   virtual void run();
 };
 
-
-
-
-
 //classe simulant le module RTC de façon grossière, donne l'heure, date jour etc
-class DigitalSensorRTC : public Device{
+class DigitalSensorRTC : public DigitalSensor{
 protected :
-  // etat bouton
+  // etat du jour : journee = 1, nuit = 0
   int jour;
-  // temps entre 2 affichage de l etat du bouton
-  int temps;
 
 public :
   // constructeur;
@@ -207,10 +193,6 @@ public :
   //fonction qui renvoie la date et l'heure quand on lui demande
   virtual void run();
 };
-
-
-
-
 
 
 

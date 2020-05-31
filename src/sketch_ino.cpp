@@ -1,9 +1,11 @@
 #include <unistd.h>
 #include "core_simulation.h"
 
-#define RIDEAUCLOSE 10 // pour teste plus rapide
-#define RIDEAUOPEN 20  // pour teste plus rapide
+#define RIDEAUCLOSE 70 // pour teste plus rapide
+#define RIDEAUOPEN 90  // pour teste plus rapide
 #define TEMPIDEAL 23
+
+int level; 
 
 
 // la fonction d'initialisation d'arduino
@@ -40,8 +42,10 @@ void Board::loop(){
   int valPos;
   int etatPresence;
   int etatJour;
-  int etatButton = 0; 
+  int etatButton = 0;
+  
   static int cpt=0;
+  int testjour=1;
 
   for(int i=0;i<10;i++){
     // lecture sur les pins
@@ -73,43 +77,76 @@ void Board::loop(){
 
     // ***TEST CAS JOURNEE : LUMINOSITY 400 + TEMPERATURE 23***
     if(etatPresence==1){
-      if(etatJour==1){
+      if(testjour==1){
         // juge luminosite pour assure lum>=400
         // cas humain autorise de toucher le rideau
         if(valLum<400 && etatButton==LOW){
           analogWrite(5,RIDEAUOPEN);
           if(valLum<250 && valPos==RIDEAUOPEN){
             analogWrite(6,4);
+            level=4;
           }
           else if(valLum>=250 && valLum < 300 && valPos==RIDEAUOPEN){
             analogWrite(6,3);
+            level=3;
           }
           else if(valLum>=300 && valLum < 350 && valPos==RIDEAUOPEN){
             analogWrite(6,2);
+            level=2;
           }
           else if(valLum>=350 && valPos==RIDEAUOPEN){
             analogWrite(6,1);
+            level=1;
           }
         }
-        // cas humain n'autorise pas de toucher le rideau
+        // cas humain impose rideau a fermer
         else if(valLum<400 && etatButton==HIGH){
-          analogWrite(5,0);
-          if(valLum<250){
-            analogWrite(6,4);
+          cout<<"Log <400 + HIGH"<<endl;
+          analogWrite(5,RIDEAUCLOSE);
+          if(level==0 && valPos==RIDEAUCLOSE){
+            cout<<"LEVEL=0"<<endl;
+            if(valLum<250){
+              analogWrite(6,4);
+            }
+            else if(valLum>=250 && valLum < 300 && valPos==RIDEAUCLOSE){
+              analogWrite(6,3);
+            }
+            else if(valLum>=300 && valLum < 350 && valPos==RIDEAUCLOSE){
+              analogWrite(6,2);
+            }
+            else if(valLum>=350 && valPos==RIDEAUCLOSE){
+              analogWrite(6,1);
+            }
           }
-          else if(valLum>=250 && valLum < 300){
-            analogWrite(6,3);
-           }
-          else if(valLum>=300 && valLum < 350){
-            analogWrite(6,2);
-          }
-          else if(valLum>=350){
-            analogWrite(6,1);
+          else if(level!=0 && valPos==RIDEAUCLOSE){
+            cout<<"LOGLOGLOG"<<endl;
+            if(valLum<250){
+              analogWrite(6,4);
+              cout<<"!!!Lunimosite MAXIMUM!!!"<<endl;
+            }
+            else if(valLum>=250 && valLum<300){
+              analogWrite(6,level+3);
+            }
+            else if(valLum>=300 && valLum<350){
+              analogWrite(6,level+2);
+            }
+            else if(valLum>=350){
+              analogWrite(6,level+1);
+            }
           }   
         }
-        else{
+        else if(valLum>=400 && etatButton==HIGH){
+          cout<<"LOG: level ="<<level<<endl;
+          analogWrite(5,RIDEAUCLOSE);
           if(valTem<19||valTem>25){
-            analogWrite(7,23);
+            analogWrite(7,TEMPIDEAL);
+          }
+
+        }
+        else{
+          cout<<"LOG:LUM BON"<<endl;
+          if(valTem<19||valTem>25){
+            analogWrite(7,TEMPIDEAL);
           } 
         }
       }
@@ -117,24 +154,10 @@ void Board::loop(){
       //***CAS NUIT***
         analogWrite(5,RIDEAUCLOSE);
         if((valTem<19||valTem>25) && valPos==RIDEAUCLOSE){
-          analogWrite(7,23);
+          analogWrite(7,TEMPIDEAL);
         }
       }
     }
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
 
     sleep(1); // sleep une seconde
   }

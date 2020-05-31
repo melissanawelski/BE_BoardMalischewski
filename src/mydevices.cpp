@@ -4,26 +4,73 @@
 using namespace std;
 
 int temperature_environnement = 18;
-int position_rideau = 15;
+int position_rideau = 80;
 int luminosite_environnement = 200;
 int luminosite_externe = 200;
 int luminosite_rideau = luminosite_externe * position_rideau / 100;
 int luminosite_led = 0;
 int luminosite_lampe = 0;
-int nb_humain = 2;
+int nb_humain = 1;
 
 
 // classe exception
 LampException::LampException(int l){
   lel=l;
 }
+
 int LampException::getLevel(){
   return lel;
 }
 
+// classe AnalogSensor
+AnalogSensor::AnalogSensor(int d):Device(),temps(d){
+  val = 0;
+}
+
+void AnalogSensor::run(){
+  while(1){
+    cout << "empty analogsensor\n";
+    sleep(3);
+  }
+}
+
+// classe DigitalSensor
+DigitalSensor::DigitalSensor(int d): Device(),temps(d){
+}
+
+void DigitalSensor::run(){
+  while(1){
+    cout << "empty digitalsensor\n";
+    sleep(3);
+  }
+}
+
+// classe AnalogActuator
+AnalogActuator::AnalogActuator(int t):Device(),input(0),temps(t){
+}
+void AnalogActuator::run(){
+  while(1){
+    cout << "empty analogactuator\n";
+    sleep(3);
+  }
+}
+
+// classe DigitalActuator
+DigitalActuator::DigitalActuator(int d):Device(), state(LOW),temps(d){
+}
+
+void DigitalActuator::run(){
+  while(1){
+    cout << "empty digitalactuator\n";
+    sleep(3);
+  }
+}
+
+
 //classe AnalogSensorTemperature
-AnalogSensorTemperature::AnalogSensorTemperature(int d):Device(),temps(d){
+AnalogSensorTemperature::AnalogSensorTemperature(int d):AnalogSensor(d){
   val = temperature_environnement;
+  cout<<"temps"<<temps<<endl;
 }
 
 void AnalogSensorTemperature::run(){
@@ -35,17 +82,13 @@ void AnalogSensorTemperature::run(){
 }
 
 //classe AnalogSensorLuminosity
-AnalogSensorLuminosity::AnalogSensorLuminosity(int d):Device(),temps(d){
+AnalogSensorLuminosity::AnalogSensorLuminosity(int d):AnalogSensor(d){
   val=luminosite_environnement + luminosite_led + luminosite_lampe + luminosite_rideau;
 }
 
 void AnalogSensorLuminosity::run(){
   while(1){
     if(ptrmem!=NULL){
-      //cout<<"[LOG]luminosit_env: " << luminosite_environnement << endl;
-      //cout<<"[LOG]luminosit_led: " << luminosite_led << endl;
-      //cout<<"[LOG]alea: " << alea << endl;
-      //sleep(1);
       luminosite_rideau = luminosite_externe * position_rideau / 100;
       *ptrmem = luminosite_environnement + luminosite_led + luminosite_lampe + luminosite_rideau;
     }
@@ -54,7 +97,7 @@ void AnalogSensorLuminosity::run(){
 }
 
 // classe AnalogSensorPosition
-AnalogSensorPosition::AnalogSensorPosition(int d):Device(),temps(d){
+AnalogSensorPosition::AnalogSensorPosition(int d):AnalogSensor(d){
   val=position_rideau;
 }
 
@@ -67,7 +110,7 @@ void AnalogSensorPosition::run(){
 }
 
 //classe DigitalActuatorLED
-DigitalActuatorLED::DigitalActuatorLED(int t):Device(),state(LOW),temps(t){
+DigitalActuatorLED::DigitalActuatorLED(int t):DigitalActuator(t){
 }
 
 void DigitalActuatorLED::run(){
@@ -84,7 +127,7 @@ void DigitalActuatorLED::run(){
 }
 
 // classe IntelligentDigitalActuatorLED
-IntelligentDigitalActuatorLED::IntelligentDigitalActuatorLED(int t):Device(),state(LOW),temps(t){
+IntelligentDigitalActuatorLED::IntelligentDigitalActuatorLED(int t):DigitalActuator(t){
 }
 
 void IntelligentDigitalActuatorLED::run(){
@@ -103,7 +146,7 @@ void IntelligentDigitalActuatorLED::run(){
 }
 
 // classe AnalogActuatorMoteur
-AnalogActuatorMotor::AnalogActuatorMotor(int t):Device(),input(0),temps(t){
+AnalogActuatorMotor::AnalogActuatorMotor(int t):AnalogActuator(t){
 }
 
 void AnalogActuatorMotor::checkRange(int in){
@@ -142,7 +185,7 @@ void AnalogActuatorMotor::run(){
 }
 
 // classe IntelligentAnalogActuatorLamp
-IntelligentAnalogActuatorLamp::IntelligentAnalogActuatorLamp(int t):Device(),level(0),temps(t){
+IntelligentAnalogActuatorLamp::IntelligentAnalogActuatorLamp(int t):AnalogActuator(t){
 }
 
 void IntelligentAnalogActuatorLamp::checkLevel(int l){
@@ -153,10 +196,10 @@ void IntelligentAnalogActuatorLamp::checkLevel(int l){
 void IntelligentAnalogActuatorLamp::run(){
   while(1){
     if(ptrmem!=NULL)
-      level=*ptrmem;
+      input=*ptrmem;
     try{
-      checkLevel(level);
-      switch (level){
+      checkLevel(input);
+      switch (input){
         case 1:
           luminosite_lampe = 50;
           cout << "((((allumeLampe a niveau 1))))\n";
@@ -186,7 +229,7 @@ void IntelligentAnalogActuatorLamp::run(){
 }
 
 // classe AnalogActuatorChauffClim
-AnalogActuatorChauffClim::AnalogActuatorChauffClim(int t):Device(),input(0),temps(t){
+AnalogActuatorChauffClim::AnalogActuatorChauffClim(int t):AnalogActuator(t){
 }
 
 void AnalogActuatorChauffClim::checkFigure(int in){
@@ -257,7 +300,7 @@ void ExternalDigitalSensorButton::run(){
 }
 
 //classe IrSensor
-DigitalSensorIR::DigitalSensorIR(int t) : Device(), stateIR(LOW), temps(t){
+DigitalSensorIR::DigitalSensorIR(int t) : DigitalSensor(t), stateIR(LOW){
 
 };
 
@@ -279,8 +322,9 @@ void DigitalSensorIR::run(){
 }
 
 //classe simulant le module RTC de façon grossière, donne l'heure, date jour etc
-DigitalSensorRTC::DigitalSensorRTC(int t) :  Device(), jour(LOW), temps(t){
-
+DigitalSensorRTC::DigitalSensorRTC(int t) : DigitalSensor(t), jour(LOW){
+  cout<< "DigitalSensorRTC - t: "<< t<<endl;
+  cout<<"DigitalSensorRTC - temp: " << temps<<endl;
 };
 
 void DigitalSensorRTC::run(){
